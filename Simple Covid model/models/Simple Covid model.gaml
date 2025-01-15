@@ -41,9 +41,9 @@ global {
 	map<string, rgb> color_per_state <- [SUSCEPTIBLE::#green, INFECTED::#red, IMMUNE::#pink];
 	
 	
-	bool use_containment <- false;
+	bool use_containment <- true;
 	float begin_containment <- 30.0 ; // in number of days
-	float time_containment <- 30.0 ;// in number of days
+	float time_containment <- 30.0 ; // in number of days
 	
 	float proba_respect_containment <- 1.0;
 	
@@ -56,13 +56,10 @@ global {
 		list<building> offices <- building where (each.type = OFFICE);
 		
 			
-		time_infectious <- time_infectious  * #day;
-		time_immunity <- time_immunity #days;
-		begin_containment <- begin_containment #day;
-		time_containment <- time_containment #day;
-	
-	
-		
+		time_infectious <- time_infectious * #day;
+		time_immunity <- time_immunity * #day;
+		begin_containment <- begin_containment * #day;
+		time_containment <- time_containment * #day;
 		
 		create individual number: num_individuals {
 			age <- rnd(10,90);
@@ -254,8 +251,8 @@ experiment SimpleCovidmodel_optimized type: gui {
 
 experiment SimpleCovidmodel type: gui {
     parameter "Proba Infection: " var: proba_infection_h  min: 0.0 max: 1.0 ;
-    parameter "Time Infection: " var: time_infectious  min: 1.0max: 20.0 ;
-    parameter "Time Immunity: " var: time_immunity  min: 1.0 max: 20.0 ;
+    parameter "Time Infection: " var: time_infectious  min: 1.0 max: 20.0 ;
+    parameter "Time Immunity: " var: time_immunity  min: 1.0 max: 200.0 ;
     parameter "Proba Isolation: " var: proba_isolation_infected  min: 0.0 max: 1.0 ;
     parameter "Proba Respect Containment: " var: proba_respect_containment  min: 0.0 max: 1.0 ;
 	
