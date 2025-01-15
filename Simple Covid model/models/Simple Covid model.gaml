@@ -28,9 +28,9 @@ global {
 	
 	float proba_isolation_infected <- 0.5;
 	
-	float time_infectious <- 5 #days;
+	float time_infectious <- 5.0; // in number of days
 	
-	float time_immunity <- 30 #days;
+	float time_immunity <- 30.0; // in number of days
 	
 	bool optimization_not_move_agents <- true;
 	
@@ -41,9 +41,9 @@ global {
 	map<string, rgb> color_per_state <- [SUSCEPTIBLE::#green, INFECTED::#red, IMMUNE::#pink];
 	
 	
-	bool use_containment <- true;
-	float begin_containment <- 30 #day;
-	float time_containment <- 30 #day;
+	bool use_containment <- false;
+	float begin_containment <- 30.0 ; // in number of days
+	float time_containment <- 30.0 ;// in number of days
 	
 	float proba_respect_containment <- 1.0;
 	
@@ -54,6 +54,15 @@ global {
 		list<building> residences <- building where (each.type = RESIDENTIAL);
 		list<building> schools <- building where (each.type = SCHOOL);
 		list<building> offices <- building where (each.type = OFFICE);
+		
+			
+		time_infectious <- time_infectious  * #day;
+		time_immunity <- time_immunity #days;
+		begin_containment <- begin_containment #day;
+		time_containment <- time_containment #day;
+	
+	
+		
 		
 		create individual number: num_individuals {
 			age <- rnd(10,90);
@@ -133,6 +142,7 @@ species individual {
 	
 	reflex infect_other when: state = INFECTED and not isolated  {
 		ask current_building.individuals where (each.state = SUSCEPTIBLE){
+				
 			if flip(proba_infection_h) {
 				do become_infected;
 			}
@@ -141,6 +151,7 @@ species individual {
 	
 	reflex recover when: state = INFECTED {
 		infected_time <- infected_time + step;
+		write""+ step +  " time_infectious: " + time_infectious;
 		if (infected_time > time_infectious) {
 			do change_state(IMMUNE);
 			immune_time <- 0.0;
@@ -200,7 +211,7 @@ species building {
 
 
 experiment impact_time_containment type: batch until: time > 6#month  repeat: 4{
-	parameter time_containment var:time_containment among: [0.0, 5 #day, 10#day, 20 #day, 30 #day];
+	parameter time_containment var:time_containment among: [0.0, 5.0, 10.0, 20.0, 30.0];
 	
 	init {
 		optimization_not_move_agents <- true;
@@ -243,7 +254,7 @@ experiment SimpleCovidmodel_optimized type: gui {
 
 experiment SimpleCovidmodel type: gui {
     parameter "Proba Infection: " var: proba_infection_h  min: 0.0 max: 1.0 ;
-    parameter "Time Infection: " var: time_infectious  min: 1.0 max: 20.0 ;
+    parameter "Time Infection: " var: time_infectious  min: 1.0max: 20.0 ;
     parameter "Time Immunity: " var: time_immunity  min: 1.0 max: 20.0 ;
     parameter "Proba Isolation: " var: proba_isolation_infected  min: 0.0 max: 1.0 ;
     parameter "Proba Respect Containment: " var: proba_respect_containment  min: 0.0 max: 1.0 ;
