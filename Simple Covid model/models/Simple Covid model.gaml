@@ -45,7 +45,7 @@ global {
 	float begin_containment <- 30 #day;
 	float time_containment <- 30 #day;
 	
-	float propa_respect_containment <- 1.0;
+	float proba_respect_containment <- 1.0;
 	
 	int num_of_not_working_day;
 	
@@ -96,7 +96,7 @@ global {
 species government {
 	reflex begin_containment when: use_containment and time = begin_containment {
 		ask individual  {
-			if flip(propa_respect_containment) {
+			if flip(proba_respect_containment) {
 				do manage_isolated(true);
 				num_of_not_working_day <- num_of_not_working_day + int(time_containment/#day);
 			}
@@ -242,6 +242,12 @@ experiment SimpleCovidmodel_optimized type: gui {
 }
 
 experiment SimpleCovidmodel type: gui {
+    parameter "Proba Infection: " var: proba_infection_h  min: 0.0 max: 1.0 ;
+    parameter "Time Infection: " var: time_infectious  min: 1.0 max: 20.0 ;
+    parameter "Time Immunity: " var: time_immunity  min: 1.0 max: 20.0 ;
+    parameter "Proba Isolation: " var: proba_isolation_infected  min: 0.0 max: 1.0 ;
+    parameter "Proba Respect Containment: " var: proba_respect_containment  min: 0.0 max: 1.0 ;
+	
 	output {
 		display map {
 			species building;
@@ -254,5 +260,9 @@ experiment SimpleCovidmodel type: gui {
 				data "num immune" color: color_per_state[IMMUNE] value: individual count (each.state = IMMUNE);
 			}
 		}
+		monitor "num susceptibles" value: individual count (each.state = SUSCEPTIBLE);
+		monitor "num infected" value: individual count (each.state = INFECTED);
+		monitor "num immune" value: individual count (each.state = IMMUNE);
 	}
 }
+
